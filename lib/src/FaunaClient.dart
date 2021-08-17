@@ -1,9 +1,15 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:faunadb_http/src/ChunkedEventDecoder.dart';
+import 'package:faunadb_http/src/events/stream_event.dart';
 import 'package:http/http.dart';
 
 import './FaunaConfig.dart';
 import 'fql/result.dart';
+
+part 'FaunaStream.dart';
 
 /// The Dart native client for FaunaDB.
 ///
@@ -81,6 +87,11 @@ class FaunaClient {
         )
         .timeout(config.timeout)
         .then((Response response) => FaunaResponse.fromBody(response.body));
+  }
+
+  /// Creates a subscription for an [expession] in Fauna.
+  FaunaStream stream(Object expression, {FaunaConfig? options}) {
+    return FaunaStream._(this, options, expression);
   }
 
   /// Closes and releases all client resources.
