@@ -33,7 +33,7 @@ class FaunaStream {
         .where((event) => event.isNotEmpty)
         .listen((events) {
       events.forEach((event) {
-        _streamController.add(event);
+        if (!_streamController.isClosed) _streamController.add(event);
       });
     });
   }
@@ -43,8 +43,8 @@ class FaunaStream {
 
   void close() {
     _subscription?.cancel();
-    _streamController.close();
     _client?.close();
     _client = null;
+    _streamController.close();
   }
 }
